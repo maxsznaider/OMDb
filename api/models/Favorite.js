@@ -7,7 +7,6 @@ Favorite.init(
     apiId: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
     },
     Title: {
       type: Sequelize.STRING,

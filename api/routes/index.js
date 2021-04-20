@@ -4,9 +4,19 @@ const router = express.Router()
 const { User, Favorite } = require("../models")
 
 router.post("/signup", function (req, res) {
-  User.create(req.body).then((newUser) => {
-    res.send(newUser)
-  })
+  User.findOne({ where: { email: req.body.email } })
+    .then((user) => {
+      if (user) throw new Error("Email address already in use.")
+      else return User.findOne({ where: { username: req.body.username } })
+    })
+    .then((user) => {
+      if (user) throw new Error("Username already exists.")
+      else return User.create(req.body)
+    })
+    .then((newUser) => {
+      res.send(newUser)
+    })
+    .catch(({ message }) => res.status(409).send(message))
 })
 
 router.post("/addtofavorites", function (req, res) {

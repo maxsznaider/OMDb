@@ -10,9 +10,16 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const dispatch = useDispatch()
   const history = useHistory()
+  const [error, setError] = useState("")
+  const [showButtonSpinner, setShowButtonSpinner] = useState(false)
+
+  React.useEffect(() => {
+    setError("")
+  }, [username, password])
 
   const handleSubmit = function (event) {
     event.preventDefault()
+    setShowButtonSpinner(true)
     axios
       .post("/api/login", {
         username,
@@ -28,6 +35,12 @@ const Login = () => {
             dispatch(loadStoreFavorites(favorites.data))
             history.push("/favorites")
           })
+      })
+      .catch((error) => {
+        if (error.response.data === "Unauthorized")
+          setError("Invalid username or password.")
+        else setError(error.response.data)
+        setShowButtonSpinner(false)
       })
   }
   return (
@@ -49,8 +62,11 @@ const Login = () => {
           name="password"
           onChange={(event) => setPassword(event.target.value)}
         />
-        <button>Log In</button>
+        <button>
+          {showButtonSpinner ? <div className="small-spinner"></div> : "Log In"}
+        </button>
       </form>
+      {error && <div className="sign-up-or-log-in-error">{error}</div>}
     </div>
   )
 }

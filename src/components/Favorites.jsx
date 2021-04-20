@@ -45,7 +45,7 @@ const Favorites = () => {
         <hr />
       </div>
       <div className="results-container">
-        {currentFavorites.length > 0
+        {Array.isArray(currentFavorites) && currentFavorites.length > 0
           ? currentFavorites.map((movie, index) => (
               <div className="single-result" key={index}>
                 <Icon movie={movie} />

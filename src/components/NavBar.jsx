@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { getCurrentUser } from "../store/currentUser"
+import { loadStoreFavorites } from "../store/currentFavorites"
 
 const NavBar = () => {
   const currentUser = useSelector((state) => state.currentUser)
@@ -24,6 +25,7 @@ const NavBar = () => {
   const handleLogout = function (event) {
     axios.post("/api/logout").then(() => {
       dispatch(getCurrentUser(""))
+      dispatch(loadStoreFavorites("loading"))
       history.push("/")
     })
   }
@@ -31,7 +33,7 @@ const NavBar = () => {
   return (
     <div className="navbar-container">
       <div className="navbar">
-        <div className="logo">OMDb</div>
+      <Link to="/"><div className="logo">OMDb</div></Link>
         <div className="search">
           <form onSubmit={handleSubmit}>
             <input

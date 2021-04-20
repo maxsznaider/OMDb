@@ -71,6 +71,7 @@ const Icon = ({ movie }) => {
 
 const Search = (props) => {
   const [searchResults, setSearchResults] = useState("loading")
+  const currentFavorites = useSelector((state) => state.currentFavorites)
 
   React.useEffect(() => {
     axios
@@ -101,7 +102,7 @@ const Search = (props) => {
         {Array.isArray(searchResults) ? (
           searchResults.map((movie, index) => (
             <div className="single-result" key={index}>
-              <Icon movie={movie} />
+              {currentFavorites !== "loading" ? <Icon movie={movie}/> : null}
               <Link className="picture" to={`/movies/${movie.imdbID.slice(2)}`}>
                 {movie.Poster !== "N/A" ? (
                   <img src={movie.Poster} alt={movie.Title} />

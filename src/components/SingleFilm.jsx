@@ -7,6 +7,7 @@ import {
 } from "../store/currentFavorites"
 
 const Metascore = ({ selectedMovie }) => {
+  console.log(selectedMovie.Metascore)
   if (selectedMovie.Metascore < 40)
     return (
       <div className="metascore">
@@ -19,7 +20,7 @@ const Metascore = ({ selectedMovie }) => {
         <span className="score yellow">{selectedMovie.Metascore}</span>Metascore
       </div>
     )
-  if (selectedMovie.Metascore > 60)
+  if (selectedMovie.Metascore >= 60)
     return (
       <div className="metascore">
         <span className="score green">{selectedMovie.Metascore}</span>Metascore
@@ -71,28 +72,30 @@ const Icon = ({ selectedMovie }) => {
       )
   }
 
-  if (
-    Object.keys(selectedMovie).length === 0 ||
-    typeof currentUser.id !== "number"
-  )
-    return null
-  if (
-    currentFavorites
-      .map((favorite) => favorite.apiId)
-      .includes(selectedMovie.imdbID.slice(2))
-  )
-    return (
-      <span onClick={removeFromFavorites} className="add-to-favorites">
-        <i className="single-movie-icon fas fa-trash-alt"></i> Remove from
-        Favorites
-      </span>
+  // if (
+  //   Object.keys(selectedMovie).length === 0 ||
+  //   typeof currentUser.id !== "number"
+  // )
+  //   return null
+  if (currentFavorites !== "loading") {
+    if (
+      currentFavorites
+        .map((favorite) => favorite.apiId)
+        .includes(selectedMovie.imdbID.slice(2))
     )
-  else
-    return (
-      <span onClick={addToFavorites} className="add-to-favorites">
-        <i className="single-movie-icon fas fa-plus"></i> Add to Favorites
-      </span>
-    )
+      return (
+        <span onClick={removeFromFavorites} className="add-to-favorites">
+          <i className="single-movie-icon fas fa-trash-alt"></i> Remove from
+          Favorites
+        </span>
+      )
+    else
+      return (
+        <span onClick={addToFavorites} className="add-to-favorites">
+          <i className="single-movie-icon fas fa-plus"></i> Add to Favorites
+        </span>
+      )
+  } else return null
 }
 
 const SingleFilm = (props) => {
@@ -105,7 +108,7 @@ const SingleFilm = (props) => {
       )
       .then(({ data }) => {
         let characters
-        if (data.Writer.length < 190 && data.Title.length < 30)
+        if (data.Writer.length < 172 && data.Title.length < 30)
           setSelectedMovie(data)
         if (data.Writer.length > 84 && data.Title.length >= 30) characters = 84
         if (data.Writer.length > 172 && data.Title.length < 30) characters = 172

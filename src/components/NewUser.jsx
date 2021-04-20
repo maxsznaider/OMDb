@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import axios from "axios"
 import { useDispatch } from "react-redux"
 import { getCurrentUser } from "../store/currentUser"
+import { clearStoreFavorites } from "../store/currentFavorites"
 import { useHistory } from "react-router-dom"
 
 const NewUser = () => {
@@ -10,12 +11,19 @@ const NewUser = () => {
   const [lastName, setLastName] = useState("")
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState(false)
+  const [showButtonSpinner, setShowButtonSpinner] = useState(false)
 
   const dispatch = useDispatch()
   const history = useHistory()
 
+  React.useEffect(() => {
+    setError("")
+  }, [email, firstName, lastName, username, password])
+
   const handleSubmit = function (event) {
     event.preventDefault()
+    setShowButtonSpinner(true)
     axios
       .post("/api/signup", {
         email,
@@ -26,7 +34,11 @@ const NewUser = () => {
       })
       .then((newUser) => {
         dispatch(getCurrentUser({id:newUser.data.id}))
+        dispatch(clearStoreFavorites())
         history.push("/")
+      }).catch((error)=>{
+        setError(error.response.data)
+        setShowButtonSpinner(false)
       })
   }
   return (
@@ -37,7 +49,7 @@ const NewUser = () => {
       </h2>
       <form onSubmit={handleSubmit}>
         <input
-          type="text"
+          type="email"
           placeholder="Email"
           name="email"
           onChange={(event) => setEmail(event.target.value)}
@@ -66,8 +78,9 @@ const NewUser = () => {
           name="password"
           onChange={(event) => setPassword(event.target.value)}
         />
-        <button>Sign Up</button>
+        <button>{showButtonSpinner ? <div className="small-spinner"></div>: "Sign Up"}</button>
       </form>
+      {error && <div className="sign-up-or-log-in-error">{error}</div>}
     </div>
   )
 }
